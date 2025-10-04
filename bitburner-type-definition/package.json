@@ -1,0 +1,5 @@
+{
+	"name": "bitburner-type-definition",
+	"version": "0.1.0",
+	"types": "./NetscriptDefinitions.d.ts"
+}
