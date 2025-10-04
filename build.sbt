@@ -4,7 +4,8 @@ lazy val commonSettings = Seq(
   scalaVersion := "3.6.3",
   scalaJSLinkerConfig ~= {
     _.withModuleKind(ModuleKind.ESModule)
-  }
+  },
+  libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.6.3"
 )
 
 lazy val root = (project in file("."))
@@ -15,7 +16,7 @@ lazy val root = (project in file("."))
 lazy val helloWorld = (project in file("modules/hello-world"))
   .enablePlugins(ScalaJSPlugin, BitburnerPlugin)
   .settings(
-    commonSettings,
+    commonSettings
   )
   .dependsOn(BitburnerTypes, common)
 
