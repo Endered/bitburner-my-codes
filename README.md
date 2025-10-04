@@ -4,14 +4,8 @@ This is a repository for maintain codes for [Bitburner](https://store.steampower
 ## How to developing
 
 ```
-# @terminal 1
-npm run watch:remote
+npm i
 
-
-# @terminal 2
-just sbt 
-# ... some prompts from sbt 
-# ... some prompts from sbt 
-# ... some prompts from sbt 
-~uploadtoBitburner # it will build sourcecode automatically and upload to Bitburner
+npm run watch:remote # run in background
+sbt -J-Xmx4G ~uploadToBitburner # it will build sourcecode automatically and upload to Bitburner
 ```
