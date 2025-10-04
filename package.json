@@ -1,0 +1,15 @@
+{
+	"name": "bitburner-my-codes",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"watch:remote": "bitburner-filesync"
+	},
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"devDependencies": {
+		"bitburner-filesync": "^1.1.5"
+	}
+}
