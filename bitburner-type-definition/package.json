@@ -1,5 +1,8 @@
 {
 	"name": "bitburner-type-definition",
 	"version": "0.1.0",
-	"types": "./NetscriptDefinitions.d.ts"
+	"types": "./NetscriptDefinitions.d.ts",
+	"devDependencies": {
+		"typescript": "^5.9.3"
+	}
 }

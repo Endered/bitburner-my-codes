@@ -10,7 +10,9 @@
 	"license": "ISC",
 	"description": "",
 	"devDependencies": {
-		"bitburner-filesync": "^1.1.5",
+		"bitburner-filesync": "^1.1.5"
+	},
+	"dependencies": {
 		"bitburner-type-definition": "file:bitburner-type-definition"
 	}
 }
