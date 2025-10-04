@@ -1,2 +1,6 @@
 dist/
 node_modules/
+/**/.bsp/
+/**/.bloop/
+/**/.metals/
+/**/target/
