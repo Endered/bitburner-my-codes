@@ -7,5 +7,6 @@ This is a repository for maintain codes for [Bitburner](https://store.steampower
 npm i
 
 npm run watch:remote # run in background
-sbt -J-Xmx4G ~uploadToBitburner # it will build sourcecode automatically and upload to Bitburner
+
+sbt -J-Xmx4G ~uploadToBitburner # it will build source codes automatically and upload to Bitburner
 ```
