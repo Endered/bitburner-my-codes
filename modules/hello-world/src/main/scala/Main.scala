@@ -2,6 +2,7 @@ import cats.effect.IO
 import cats.effect.kernel.Ref
 import cats.effect.kernel.Resource
 import cats.effect.std.Random
+import scala.util.chaining.given
 import cats.effect.unsafe.implicits.global
 import cats.kernel.Monoid
 import cats.syntax.all.given
@@ -44,6 +45,9 @@ import scala.concurrent.duration.given
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters.given
 import scala.scalajs.js.annotation.JSExportTopLevel
+import util.filterByScore
+import Batch.batchAttack
+import Batch.filterByBatchable
 
 def backdooredAll()(using NS): Seq[HostName] =
   scanAll()
@@ -57,18 +61,13 @@ def makeBackdooredsIO(
     ref <- Resource.eval(Ref.of[IO, Seq[HostName]](Seq()))
     _ <- (for {
       hosts <- IO(backdooredAll())
-      sortedHosts = hosts
-        .map(host => host -> makeServerScore(host))
-        .sortBy(x => x._2.totalScore)
-        .reverse
-        .map(x => x._1)
-      _ <- ref.set(sortedHosts)
+      _ <- ref.set(hosts)
       _ <- IO.sleep(updateInterval)
     } yield ()).foreverM.background
   } yield ref.get
 }
 
-def isAttackTarget(host: HostName)(using NS) = maxAttackTime(host) < 300 * 1000
+def isAttackTarget(host: HostName)(using NS) = maxAttackTime(host) < 1200 * 1000
 
 def plannigRequiredAttacks(host: HostName, attack: Attack)(using NS): Attack = {
   def weaken = {
@@ -90,8 +89,7 @@ def plannigRequiredAttacks(host: HostName, attack: Attack)(using NS): Attack = {
     Attack.withGrow(max(threads - attack.grow, 0))
   }
   () match {
-    case _
-        if getServerSecurityLevel(host) > getServerMinSecurityLevel(host) + 1 =>
+    case _ if getServerSecurityLevel(host) > getServerMinSecurityLevel(host) + 1 =>
       weaken
     case _ if getServerMoneyAvailable(host) < getServerMaxMoney(host) * 0.95 =>
       grow
@@ -103,7 +101,7 @@ def plannigRequiredAttacks(host: HostName, attack: Attack)(using NS): Attack = {
 def planningAttack(
     hosts: Seq[HostName]
 )(using NS): List[(HostName, HostName, AttackElement)] = {
-  val attackTargets = hosts.filter(isAttackTarget)
+  val attackTargets = hosts.filter(isAttackTarget).pipe(filterByScore(_))
   val attackerHosts = hosts ++ getPurchasedServers()
   val currentAttackings = attackerHosts.map(getAttackings).combineAll.value
   val availableThreads =
@@ -167,17 +165,26 @@ def upgradeServer(using NS): IO[Nothing] = {
 def withInterval(duration: FiniteDuration)[T](io: IO[T]): IO[Nothing] =
   (io >> IO.sleep(duration)).foreverM
 
+def batchAttackOnce(backdooredsIO: IO[Seq[HostName]])(using NS) = for {
+  backdooreds <- backdooredsIO
+  attackers = backdooreds ++ getPurchasedServers()
+  targets = backdooreds.filter(isAttackTarget).pipe(filterByBatchable(attackers, _)).pipe(filterByScore)
+  _ = batchAttack(attackers, targets)
+} yield ()
+
 def run(using NS): IO[Unit] = (for {
-  backdooredsIO <- makeBackdooredsIO(1.seconds)
+  backdooredsIO <- makeBackdooredsIO(10.seconds)
 } yield for {
-  _ <- (for {
+  _ <- (for
     j1 <- withInterval(10.seconds)(attackOnce(backdooredsIO)).start
     j2 <- buyAllServer.start
     j3 <- upgradeServer.start
+    j4 <- withInterval(1.seconds)(batchAttackOnce(backdooredsIO)).start
     _ <- j1.join
     _ <- j2.join
     _ <- j3.join
-  } yield ())
+    _ <- j4.join
+  yield ())
 } yield ()).use(identity).void
 
 @JSExportTopLevel("main")

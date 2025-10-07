@@ -40,6 +40,7 @@ import common.types.ServerScore
 import typings.bitburnerTypeDefinition.mod.NS
 
 import scala.util.chaining.given
+import common.NSWrapper.toast
 
 object util {
 
@@ -263,5 +264,36 @@ object util {
       hackTime + growTime + weakenTime,
       hackThreads + growThreads + weakenThreads
     )
+  }
+
+  def filterByScore(hosts: Seq[HostName])(using NS): Seq[HostName] = {
+    val hostsWithScore = hosts.map(host => host -> makeServerScore(host)).sortBy(x => x._2.totalScore).reverse
+    hostsWithScore
+      .filter { case (host, score) =>
+        hostsWithScore(0)._2.totalScore * 0.1 < score.totalScore
+      }
+      .map(x => x._1)
+  }
+
+  def allocateThreadsToRequires[T](
+      availableThreads: Seq[(HostName, Long)],
+      threadRequires: Seq[(T, Long)]
+  ): List[(HostName, T, Long)] = {
+    def rec(availables: List[(HostName, Long)], requires: List[(T, Long)]): List[(HostName, T, Long)] = {
+      (availables, requires) match {
+        case (Nil, _)                                      => Nil
+        case (_, Nil)                                      => Nil
+        case ((host, available) :: xs, (t, require) :: ys) =>
+          if (available < require) {
+            (host, t, available) :: rec(xs, (t, require - available) :: ys)
+          } else if (available > require) {
+            (host, t, require) :: rec((host, available - require) :: xs, ys)
+          } else {
+            (host, t, available) :: rec(xs, ys)
+          }
+      }
+    }
+
+    rec(availableThreads.toList, threadRequires.toList)
   }
 }

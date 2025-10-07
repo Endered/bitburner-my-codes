@@ -148,4 +148,10 @@ object NSWrapper {
 
   def brutessh(hostname: HostName)(using ns: NS): Boolean =
     ns.brutessh(hostname.value)
+
+  def ls(hostname: HostName)(using ns: NS): Seq[String] = ns.ls(hostname.value).toSeq
+
+  def rm(hostname: HostName, file: String)(using ns: NS): Boolean = ns.rm(file, hostname.value)
+
+  def log(message: String)(using ns: NS) = ns.print(message)
 }

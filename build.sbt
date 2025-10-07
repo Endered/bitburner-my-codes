@@ -11,7 +11,8 @@ lazy val commonSettings = Seq(
 lazy val root = (project in file("."))
   .aggregate(
     helloWorld,
-    serverInfos
+    serverInfos,
+    utilScripts
   )
 
 lazy val helloWorld = (project in file("modules/hello-world"))
@@ -25,6 +26,14 @@ lazy val serverInfos = (project in file("modules/server-infos"))
   .enablePlugins(ScalaJSPlugin, BitburnerPlugin)
   .settings(
     name := "server-infos",
+    commonSettings
+  )
+  .dependsOn(BitburnerTypes, common)
+
+lazy val utilScripts = (project in file("modules/util-scripts"))
+  .enablePlugins(ScalaJSPlugin, BitburnerPlugin)
+  .settings(
+    name := "util-scripts",
     commonSettings
   )
   .dependsOn(BitburnerTypes, common)
