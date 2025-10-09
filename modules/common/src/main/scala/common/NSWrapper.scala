@@ -11,6 +11,8 @@ import scala.util.chaining.given
 object NSWrapper {
   def toast(msg: String)(using ns: NS): Unit = ns.toast(msg)
 
+  def alert(msg: String)(using ns: NS): Unit = ns.alert(msg)
+
   def getHostName()(using ns: NS): HostName = HostName(ns.getHostname())
 
   def scan(hostname: HostName)(using ns: NS): Seq[HostName] =
