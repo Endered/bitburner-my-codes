@@ -9,6 +9,7 @@ import util.scanAll
 import scala.scalajs.js.annotation.JSExportTopLevel
 import common.types.HostName
 import common.NSWrapper.scan
+import common.NSWrapper.createDummyContract
 
 def deleteAllScripts()(using NS) = {
   for {
@@ -50,14 +51,19 @@ def findCodingContract()(using NS) = {
   alert(msg)
 }
 
+def makeDummyContract(typ: String)(using NS) = {
+  createDummyContract(typ)
+}
+
 @JSExportTopLevel("main")
 def main(ns: NS) = {
   given NS = ns
 
   ns.args.map(_.toString()).toSeq match {
-    case Seq("delete-all-scripts")    => deleteAllScripts()
-    case Seq("list-all-servers")      => listAllServers()
-    case Seq("super-connect", target) => superConnect(HostName(target))
-    case Seq("find-coding-contract")  => findCodingContract()
+    case Seq("delete-all-scripts")       => deleteAllScripts()
+    case Seq("list-all-servers")         => listAllServers()
+    case Seq("super-connect", target)    => superConnect(HostName(target))
+    case Seq("find-coding-contract")     => findCodingContract()
+    case Seq("make-dummy-contract", typ) => makeDummyContract(typ)
   }
 }

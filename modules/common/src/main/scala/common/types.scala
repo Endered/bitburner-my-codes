@@ -79,4 +79,6 @@ object types {
     def compare(x: ServerScore, y: ServerScore): Int =
       x.totalScore.compare(y.totalScore)
   }
+
+  case class CodingContract(server: HostName, file: String)
 }

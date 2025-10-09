@@ -7,6 +7,8 @@ import typings.bitburnerTypeDefinition.mod.NS
 import typings.bitburnerTypeDefinition.mod.ProcessInfo
 
 import scala.util.chaining.given
+import common.types.CodingContract
+import scala.scalajs.js
 
 object NSWrapper {
   def toast(msg: String)(using ns: NS): Unit = ns.toast(msg)
@@ -156,4 +158,16 @@ object NSWrapper {
   def rm(hostname: HostName, file: String)(using ns: NS): Boolean = ns.rm(file, hostname.value)
 
   def log(message: String)(using ns: NS) = ns.print(message)
+
+  def getContractType(contract: CodingContract)(using ns: NS): String =
+    ns.codingcontract.getContractType(contract.file, contract.server.value)
+
+  def getData(contract: CodingContract)(using ns: NS): Any =
+    ns.codingcontract.getData(contract.file, contract.server.value)
+
+  def attempt(answer: Any, contract: CodingContract)(using ns: NS): Option[String] =
+    ns.codingcontract.attempt(answer, contract.file, contract.server.value).pipe(Some.apply).filter(_ != "")
+
+  def createDummyContract(typ: String)(using ns: NS): String =
+    ns.codingcontract.createDummyContract(typ)
 }
