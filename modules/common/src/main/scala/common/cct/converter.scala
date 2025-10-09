@@ -18,10 +18,34 @@ given ConvertFromAny[Double] {
   }
 }
 
+given ConvertFromAny[Byte] {
+  def from(data: Any): Option[Byte] = data match {
+    case x: Byte => Some(x)
+    case _       => None
+  }
+}
+
+given ConvertFromAny[Short] {
+  def from(data: Any): Option[Short] = data match {
+    case TryConvert[Byte](x) => Some(x.toShort)
+    case x: Short            => Some(x)
+    case _                   => None
+  }
+}
+
 given ConvertFromAny[Int] {
   def from(data: Any): Option[Int] = data match {
-    case x: Int => Some(x)
-    case _      => None
+    case TryConvert[Short](x) => Some(x.toInt)
+    case x: Int               => Some(x)
+    case _                    => None
+  }
+}
+
+given ConvertFromAny[Long] {
+  def from(data: Any): Option[Long] = data match {
+    case TryConvert[Int](x) => Some(x.toLong)
+    case x: Long            => Some(x)
+    case _                  => None
   }
 }
 
@@ -44,4 +68,8 @@ given ConvertFromAny[String] {
     case x: String => Some(x)
     case _         => None
   }
+}
+
+given ConvertFromAny[Any] {
+  def from(data: Any): Option[Any] = Some(data)
 }

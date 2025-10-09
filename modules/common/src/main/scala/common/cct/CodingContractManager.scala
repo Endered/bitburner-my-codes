@@ -17,6 +17,27 @@ import util.scanAll
 
 import scala.concurrent.duration.FiniteDuration
 import scala.scalajs.js
+import scala.scalajs.js.JSON
+import common.cct.solvers.TotalWaysToSumII
+
+def solveCodingContract(contract: CodingContract)(using NS) = {
+  def solver: PartialFunction[(String, Any), Any] = {
+    case ("Array Jumping Game II", TryConvert[Array[Int]](data)) =>
+      ArrayJumpingGameII(data)
+    case ("Total Ways to Sum II", TryConvert[Array[Any]](Array(TryConvert[Int](sum), TryConvert[Array[Int]](xs)))) =>
+      TotalWaysToSumII(sum, xs)
+  }
+
+  val typ = getContractType(contract)
+  val input = getData(contract)
+
+  solver.lift(typ, input).foreach { answer =>
+    attempt(answer, contract) match {
+      case Some(response) => toast(s"solve a problem: ${response}")
+      case None           => alert(s"Failed to solve... type: \"${typ}\" input: ${input}, output: ${answer}")
+    }
+  }
+}
 
 class CodingContractManager()(using NS) {
   def findContracts: IO[Seq[CodingContract]] = IO {
@@ -27,21 +48,7 @@ class CodingContractManager()(using NS) {
     } yield CodingContract(server, file)
   }
 
-  def solveTo(contract: CodingContract): IO[Unit] = IO {
-    def solver: PartialFunction[(String, Any), Any] = { case ("Array Jumping Game II", TryConvert[Array[Int]](data)) =>
-      ArrayJumpingGameII(data)
-    }
-
-    val typ = getContractType(contract)
-    val input = getData(contract)
-
-    solver.lift(typ, input).foreach { answer =>
-      attempt(answer, contract) match {
-        case Some(response) => toast(s"solve a problem: ${response}")
-        case None           => alert(s"Failed to solve... type: \"${typ}\" input: ${input}, output: ${answer}")
-      }
-    }
-  }
+  def solveTo(contract: CodingContract): IO[Unit] = IO { solveCodingContract(contract) }
 
   def solveAll: IO[Unit] = for {
     contracts <- findContracts

@@ -10,6 +10,9 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 import common.types.HostName
 import common.NSWrapper.scan
 import common.NSWrapper.createDummyContract
+import common.types.CodingContract
+import common.NSWrapper.getHostName
+import common.cct.solveCodingContract
 
 def deleteAllScripts()(using NS) = {
   for {
@@ -55,6 +58,15 @@ def makeDummyContract(typ: String)(using NS) = {
   createDummyContract(typ)
 }
 
+def tryCodingContract(typ: String)(using NS) = {
+  val host = getHostName()
+  val file = createDummyContract(typ)
+  val contract = CodingContract(host, file)
+
+  solveCodingContract(contract)
+  rm(host, file)
+}
+
 @JSExportTopLevel("main")
 def main(ns: NS) = {
   given NS = ns
@@ -65,5 +77,6 @@ def main(ns: NS) = {
     case Seq("super-connect", target)    => superConnect(HostName(target))
     case Seq("find-coding-contract")     => findCodingContract()
     case Seq("make-dummy-contract", typ) => makeDummyContract(typ)
+    case Seq("try-contract", typ)        => tryCodingContract(typ)
   }
 }
