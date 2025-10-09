@@ -56,6 +56,13 @@ given [T: ConvertFromAny] => ConvertFromAny[Seq[T]] {
   }
 }
 
+given [T: ConvertFromAny] => ConvertFromAny[Vector[T]] {
+  def from(data: Any): Option[Vector[T]] = data match {
+    case x: js.Array[_] => x.toVector.traverse(summon[ConvertFromAny[T]].from)
+    case _              => None
+  }
+}
+
 given [T: {ConvertFromAny, ClassTag}] => ConvertFromAny[Array[T]] {
   def from(data: Any): Option[Array[T]] = data match {
     case x: js.Array[_] => x.toSeq.traverse(summon[ConvertFromAny[T]].from).map(_.toArray)

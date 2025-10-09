@@ -59,12 +59,14 @@ def makeDummyContract(typ: String)(using NS) = {
 }
 
 def tryCodingContract(typ: String)(using NS) = {
-  val host = getHostName()
-  val file = createDummyContract(typ)
-  val contract = CodingContract(host, file)
+  (1 to 10).foreach { _ =>
+    val host = getHostName()
+    val file = createDummyContract(typ)
+    val contract = CodingContract(host, file)
 
-  solveCodingContract(contract)
-  rm(host, file)
+    solveCodingContract(contract)
+    rm(host, file)
+  }
 }
 
 @JSExportTopLevel("main")
