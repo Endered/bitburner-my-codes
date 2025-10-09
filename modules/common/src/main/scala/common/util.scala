@@ -42,7 +42,7 @@ import typings.bitburnerTypeDefinition.mod.NS
 import scala.util.chaining.given
 import common.NSWrapper.toast
 
-object util {
+package object util {
 
   val home: HostName = HostName("home")
 
@@ -295,5 +295,17 @@ object util {
     }
 
     rec(availableThreads.toList, threadRequires.toList)
+  }
+
+  def maxAttackTimeLessThan(milliseconds: Long)(hostname: HostName)(using NS): Boolean =
+    maxAttackTime(hostname) < milliseconds
+
+  def retrieveByKeys[T, U](map: Map[T, U], keys: Seq[T]): Map[T, U] = {
+    if (map.size < keys.length) {
+      val keySets = keys.toSet
+      map.view.filterKeys(keySets.apply).toMap
+    } else {
+      keys.flatMap(key => map.get(key).map(key -> _)).toMap
+    }
   }
 }
