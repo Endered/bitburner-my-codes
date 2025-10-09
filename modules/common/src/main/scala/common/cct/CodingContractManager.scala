@@ -1,20 +1,22 @@
-package cct
+package common.cct
 
 import cats.effect.IO
+import cats.effect.Resource
+import cats.syntax.all.given
+import common.NSWrapper.alert
+import common.NSWrapper.attempt
+import common.NSWrapper.getContractType
+import common.NSWrapper.getData
 import common.NSWrapper.ls
+import common.NSWrapper.toast
+import common.cct.solvers.ArrayJumpingGameII
 import common.types.CodingContract
 import common.types.HostName
 import typings.bitburnerTypeDefinition.mod.NS
 import util.scanAll
-import common.NSWrapper.getContractType
-import common.NSWrapper.getData
-import common.NSWrapper.attempt
-import common.NSWrapper.toast
-import cats.syntax.all.given
-import cats.effect.Resource
+
 import scala.concurrent.duration.FiniteDuration
 import scala.scalajs.js
-import common.NSWrapper.alert
 
 class CodingContractManager()(using NS) {
   def findContracts: IO[Seq[CodingContract]] = IO {

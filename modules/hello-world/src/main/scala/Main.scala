@@ -19,14 +19,18 @@ import common.NSWrapper.hackAnalyzeThreads
 import common.NSWrapper.nuke
 import common.NSWrapper.scan
 import common.NSWrapper.toast
+import common.ServerBuyer
 import common.ServerEvaluator
 import common.ServerHacker
 import common.ServerSearcher
+import common.cct.CodingContractManager
 import common.types.Attack
 import common.types.AttackElement
 import common.types.Attackings
 import common.types.HostName
+import common.types.ServerScore
 import typings.bitburnerTypeDefinition.mod.NS
+import util.allocateThreadsToRequires
 import util.alreadyBuyAllServer
 import util.attackTo
 import util.availableThreadsAt
@@ -40,7 +44,9 @@ import util.home
 import util.makeServerScore
 import util.max
 import util.maxAttackTime
+import util.maxAttackTimeLessThan
 import util.purchaseNewServer
+import util.retrieveByKeys
 import util.scanAll
 import util.upgradeAllPurchasedServerBy2
 
@@ -51,12 +57,6 @@ import scala.scalajs.js
 import scala.scalajs.js.JSConverters.given
 import scala.scalajs.js.annotation.JSExportTopLevel
 import scala.util.chaining.given
-import common.ServerBuyer
-import common.types.ServerScore
-import util.maxAttackTimeLessThan
-import util.allocateThreadsToRequires
-import util.retrieveByKeys
-import cct.CodingContractManager
 
 def backdooredAll()(using NS): Seq[HostName] =
   scanAll()

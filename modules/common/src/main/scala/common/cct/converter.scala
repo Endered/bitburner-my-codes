@@ -1,4 +1,4 @@
-package cct
+package common.cct
 import scala.scalajs.js
 import cats.syntax.all.given
 import scala.reflect.ClassTag

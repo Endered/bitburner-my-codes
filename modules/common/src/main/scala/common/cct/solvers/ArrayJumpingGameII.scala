@@ -1,4 +1,4 @@
-package cct
+package common.cct.solvers
 import scala.scalajs.js
 import util.min
 import cats.kernel.Semigroup
