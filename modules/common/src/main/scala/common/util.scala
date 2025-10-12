@@ -155,7 +155,12 @@ package object util {
     Math.floor(ram / AttackRamUsage).toLong
 
   def availableThreadsAt(hostname: HostName)(using NS): Long =
-    getAvailableRam(hostname).pipe(availableThreads)
+    if (hostname == home) {
+      // for run other scripts on home machine it returns with buffer
+      (getAvailableRam(hostname).pipe(availableThreads) - 100).max(0)
+    } else {
+      getAvailableRam(hostname).pipe(availableThreads)
+    }
 
   def getAttackings(target: HostName)(using NS): Attackings = {
     ps(target)

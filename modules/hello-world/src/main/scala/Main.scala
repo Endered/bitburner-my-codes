@@ -134,7 +134,9 @@ def planningAttack(
 }
 
 def attackOnce(hacker: ServerHacker, evaluator: ServerEvaluator, buyer: ServerBuyer)(using NS) = for {
-  attackers <- (hacker.hackedServers, buyer.boughts).tupled.map { case (hacked, boughts) => hacked.toSeq ++ boughts }
+  attackers <- (hacker.hackedServers, buyer.boughts).tupled.map { case (hacked, boughts) =>
+    hacked.toSeq ++ boughts ++ Seq(home)
+  }
   hostWithScores <- evaluator.serverScores
   attacks = planningAttack(attackers, hostWithScores)
   _ = attacks.foreach { case (attacker, target, attackElement) =>
@@ -171,7 +173,7 @@ def batchAttackOnce(
 )(using NS) = for {
   backdooreds <- backdooredsIO
   attackers <- (serverHacker.hackedServers, serverBuyer.boughts).tupled
-    .map { case (hackeds, boughts) => hackeds.toSeq ++ boughts }
+    .map { case (hackeds, boughts) => hackeds.toSeq ++ boughts ++ Seq(home) }
   hostWithScores <- serverEvaluator.serverScores
   filteredTargets = hostWithScores.filterKeys(maxAttackTimeLessThan(1200 * 1000)).toMap.pipe { hws =>
     retrieveByKeys(
