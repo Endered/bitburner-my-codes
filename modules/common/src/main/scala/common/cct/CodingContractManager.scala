@@ -22,6 +22,7 @@ import scala.scalajs.js
 import scala.scalajs.js.JSON
 import common.cct.solvers.EncryptionIIVigenereCipher
 import common.cct.solvers.FindAllValidMathExpressions
+import common.cct.solvers.UniquePathsInAGridII
 
 def solveCodingContract(contract: CodingContract)(using NS) = {
   def solver: PartialFunction[(String, Any), Any] = {
@@ -38,6 +39,8 @@ def solveCodingContract(contract: CodingContract)(using NS) = {
           TryConvert[Vector[Any]](Vector(TryConvert[String](s), TryConvert[Long](n)))
         ) =>
       FindAllValidMathExpressions(s, n)
+    case ("Unique Paths in a Grid II", TryConvert[Vector[Vector[Int]]](map)) =>
+      UniquePathsInAGridII(map)
   }
 
   val typ = getContractType(contract)
