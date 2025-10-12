@@ -21,6 +21,7 @@ import scala.concurrent.duration.FiniteDuration
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 import common.cct.solvers.EncryptionIIVigenereCipher
+import common.cct.solvers.FindAllValidMathExpressions
 
 def solveCodingContract(contract: CodingContract)(using NS) = {
   def solver: PartialFunction[(String, Any), Any] = {
@@ -32,6 +33,11 @@ def solveCodingContract(contract: CodingContract)(using NS) = {
       MinimumPathSumInATriangle(data)
     case ("Encryption II: Vigenère Cipher", TryConvert[Vector[String]](Vector(s, t))) =>
       EncryptionIIVigenereCipher(s, t)
+    case (
+          "Find All Valid Math Expressions",
+          TryConvert[Vector[Any]](Vector(TryConvert[String](s), TryConvert[Long](n)))
+        ) =>
+      FindAllValidMathExpressions(s, n)
   }
 
   val typ = getContractType(contract)
