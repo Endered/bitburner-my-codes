@@ -10,6 +10,8 @@ import common.NSWrapper.getData
 import common.NSWrapper.ls
 import common.NSWrapper.toast
 import common.cct.solvers.ArrayJumpingGameII
+import common.cct.solvers.MinimumPathSumInATriangle
+import common.cct.solvers.TotalWaysToSumII
 import common.types.CodingContract
 import common.types.HostName
 import typings.bitburnerTypeDefinition.mod.NS
@@ -18,8 +20,7 @@ import util.scanAll
 import scala.concurrent.duration.FiniteDuration
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import common.cct.solvers.TotalWaysToSumII
-import common.cct.solvers.MinimumPathSumInATriangle
+import common.cct.solvers.EncryptionIIVigenereCipher
 
 def solveCodingContract(contract: CodingContract)(using NS) = {
   def solver: PartialFunction[(String, Any), Any] = {
@@ -29,6 +30,8 @@ def solveCodingContract(contract: CodingContract)(using NS) = {
       TotalWaysToSumII(sum, xs)
     case ("Minimum Path Sum in a Triangle", TryConvert[Vector[Vector[Int]]](data)) =>
       MinimumPathSumInATriangle(data)
+    case ("Encryption II: Vigenère Cipher", TryConvert[Vector[String]](Vector(s, t))) =>
+      EncryptionIIVigenereCipher(s, t)
   }
 
   val typ = getContractType(contract)
