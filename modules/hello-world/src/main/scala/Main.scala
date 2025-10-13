@@ -195,7 +195,7 @@ def run(using NS): IO[Unit] = (for {
   serverSearcher <- ServerSearcher.withAutoUpdate(10.seconds)
   serverHacker <- ServerHacker.withAutoUpdate(serverSearcher, 10.seconds)
   serverEvaluator <- ServerEvaluator.withAutoUpdate(serverHacker, 1.seconds)
-  serverBuyer <- ServerBuyer.withAutoUpdate(10.seconds)
+  serverBuyer <- ServerBuyer.withAutoUpdate(1.seconds)
   codingContractManager <- CodingContractManager.withAutoUpdate(10.seconds)
 } yield for {
   _ <- (for
