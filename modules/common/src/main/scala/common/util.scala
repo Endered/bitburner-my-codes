@@ -45,6 +45,7 @@ import common.NSWrapper.toast
 package object util {
 
   val home: HostName = HostName("home")
+  val n00dles: HostName = HostName("n00dles")
 
   val HackScript: String = "hack.js"
   val GrowScript: String = "grow.js"

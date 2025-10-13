@@ -57,6 +57,7 @@ import scala.scalajs.js
 import scala.scalajs.js.JSConverters.given
 import scala.scalajs.js.annotation.JSExportTopLevel
 import scala.util.chaining.given
+import util.n00dles
 
 def backdooredAll()(using NS): Seq[HostName] =
   scanAll()
@@ -133,11 +134,14 @@ def planningAttack(
     .map { case (attacker, (target, attack), thread) => (attacker, target, attack.withThread(thread)) }
 }
 
-def attackOnce(hacker: ServerHacker, evaluator: ServerEvaluator, buyer: ServerBuyer)(using NS) = for {
+def attackOnce(
+    hacker: ServerHacker,
+    buyer: ServerBuyer,
+    hostWithScores: Map[HostName, ServerScore]
+)(using NS) = for {
   attackers <- (hacker.hackedServers, buyer.boughts).tupled.map { case (hacked, boughts) =>
     hacked.toSeq ++ boughts ++ Seq(home)
   }
-  hostWithScores <- evaluator.serverScores
   attacks = planningAttack(attackers, hostWithScores)
   _ = attacks.foreach { case (attacker, target, attackElement) =>
     attackTo(target, attacker, attackElement)
@@ -195,14 +199,17 @@ def run(using NS): IO[Unit] = (for {
   codingContractManager <- CodingContractManager.withAutoUpdate(10.seconds)
 } yield for {
   _ <- (for
-    j1 <- withInterval(1.seconds)(
-      attackOnce(serverHacker, serverEvaluator, serverBuyer) >> batchAttackOnce(
+    j1 <- withInterval(1.seconds)(for {
+      hostWithScores <- serverEvaluator.serverScores
+      _ <- attackOnce(serverHacker, serverBuyer, hostWithScores.filter(_._1 == n00dles))
+      _ <- attackOnce(serverHacker, serverBuyer, hostWithScores)
+      _ <- batchAttackOnce(
         backdooredsIO,
         serverHacker,
         serverBuyer,
         serverEvaluator
       )
-    ).start
+    } yield ()).start
     _ <- j1.join
   yield ())
 } yield ()).use(identity).void
